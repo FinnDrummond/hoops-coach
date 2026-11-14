@@ -22,5 +22,7 @@ npx --yes @trychert/facetime@0.1.0-beta.20 dev --agent hoops-coach
 
 Wait for `"hoops-coach" is in a waiting room`, then FaceTime Video **+1 628-278-8831**.
 
+Check Chert minutes left (run in `agent/`, see the `minutes` line): `npx --yes @trychert/facetime@0.1.0-beta.20 doctor`
+
 After editing `coach_prompt.md` or `agent.mjs`, stop both with Ctrl+C and start them again.
 If `chert dev` says you're signed out, run `npx --yes @trychert/facetime@0.1.0-beta.20 login`.
