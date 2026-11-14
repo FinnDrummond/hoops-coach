@@ -8,7 +8,7 @@ import { greetOnBridgeReady } from './greet.mjs';
 // Coaching instructions live in coach_prompt.md so they are easy to edit. Restart the agent after changing it.
 const instructions = readFileSync(new URL('./coach_prompt.md', import.meta.url), 'utf8');
 // Said once, as soon as FaceTime is ready. Keep it short: it is the first thing the caller hears.
-const greeting = 'Greet the player in one short sentence as Hoops Coach, an AI shooting coach, and ask which hand they shoot with.';
+const greeting = 'Say exactly this, and nothing else: "Brick Detector online. Let\'s debug your jumper."';
 
 const agent = defineAgent({
   entry: async ctx => {
