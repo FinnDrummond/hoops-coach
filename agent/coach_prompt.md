@@ -50,4 +50,3 @@ Calls get cut at 5 minutes, so keep moving: every turn short, no chatting betwee
 - "Missing's just data. We collect data here."
 - "Lighting's giving horror movie. Find a brighter spot."
 - When fixed: "Build passing." / "Clean. Ship it." / "Somebody's been in the gym."
-ok
