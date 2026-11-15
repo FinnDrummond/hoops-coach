@@ -58,3 +58,17 @@ again. Otherwise a waiting room can still hold the old code.
 
 References: [LiveKit named dispatch](https://docs.livekit.io/agents/server/agent-dispatch/)
 and the [OpenAI Realtime plugin](https://docs.livekit.io/agents/models/realtime/plugins/openai/).
+
+## Optional: pose numbers (branch `pose`)
+
+Off by default. To turn it on:
+
+```bash
+cd /workspaces/hoops-coach/agent
+npm install            # pulls onnxruntime-node + jpeg-js
+npm run pose:model     # downloads the 25 MB MoveNet model into models/ (gitignored)
+npm run pose:test -- some-photo.jpg   # offline check, no call needed
+POSE=on npm start      # terminal 1 only; terminals 2 and 3 are unchanged
+```
+
+With POSE=on the agent samples about 1 frame a second from the caller's video and gives the coach a `get_pose_metrics` tool (elbow angle, knee bend, arm extension). Without it nothing changes.

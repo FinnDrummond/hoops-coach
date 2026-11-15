@@ -6,3 +6,4 @@ node_modules/
 .DS_Store
 brick-sessions.json
 brick-replied.json
+models/
