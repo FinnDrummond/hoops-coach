@@ -46,6 +46,7 @@ export function formatReport(s) {
     '🧱 BRICK REPORT',
     `Coach: ${s.mode}`,
     `Form Score: ${s.before} → ${s.after} /20`,
+    ...(s.prevAfter == null ? [] : [`Progress: ${s.after - s.prevAfter >= 0 ? '+' : ''}${s.after - s.prevAfter} since last time (${s.prevAfter} → ${s.after})`]),
     `#1 bug: ${s.bug}`,
     `Drill: ${s.drill}`,
     SIGN_OFFS[s.mode] ?? SIGN_OFFS['The Splash Chef'],

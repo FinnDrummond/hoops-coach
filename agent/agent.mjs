@@ -36,7 +36,8 @@ const agent = defineAgent({
       }),
       execute: async args => {
         if (!phone) return 'Could not identify the caller, nothing saved. Carry on.';
-        saveSession(phone, args);
+        // `last` was read once at call start, so every save in this call compares against the same earlier session.
+        saveSession(phone, { ...args, prevAfter: last && !last.partial ? last.after : null });
         savedThisCall = true;
         return 'Saved. Now tell the caller: Text me "report" and I\'ll send your Brick Report.';
       },
