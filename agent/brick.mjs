@@ -41,6 +41,7 @@ export const phonesEndingIn = last4 => Object.keys(load()).filter(p => p.endsWit
 
 export function formatReport(s) {
   if (!s) return NO_FILM;
+  if (s.partial) return 'Call dropped before the wrap-up, so no score yet. FaceTime me again and let\'s finish the run.';
   return [
     '🧱 BRICK REPORT',
     `Coach: ${s.mode}`,

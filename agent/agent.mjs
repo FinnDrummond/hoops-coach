@@ -24,8 +24,9 @@ const agent = defineAgent({
     try { phone = await phoneForCall(caller.identity.replace(/^chert-bridge-/, '')); } catch (e) { console.log('Brick Report: phone lookup failed:', e.message); }
     if (phone) rememberPhone(phone);
     const last = phone ? lastSession(phone) : null;
+    let savedThisCall = false;
     const saveSessionTool = llm.tool({
-      description: 'Save this caller\'s Brick Report data. Call it once at the end of the session, just before you say the Brick Report out loud.',
+      description: 'Save this caller\'s Brick Report data. Call it after EACH breakpoint with your running scores (so nothing is lost if the call drops), and again at the end, just before you say the Brick Report out loud. Later calls overwrite earlier ones.',
       parameters: z.object({
         mode: z.enum(['The Assassin', 'The Splash Chef', 'The Closer']),
         before: z.number().int().min(0).max(20).describe('Form Score before patches, out of 20'),
@@ -36,14 +37,25 @@ const agent = defineAgent({
       execute: async args => {
         if (!phone) return 'Could not identify the caller, nothing saved. Carry on.';
         saveSession(phone, args);
+        savedThisCall = true;
         return 'Saved. Now tell the caller: Text me "report" and I\'ll send your Brick Report.';
       },
     });
     const returning = last ? `\n\nRETURNING CALLER: last session they scored ${last.after}/20 with ${last.mode}. Right after your opening line, say "Last time you were ${last.after} out of 20, let's beat it."` : '';
     const session = new voice.AgentSession({
-      llm: new realtime.RealtimeModel({ model: 'gpt-realtime', voice: 'ash' }),
+      llm: new realtime.RealtimeModel({
+        model: 'gpt-realtime',
+        voice: 'ash',
+        // Only react to the caller, not room noise: far-field noise reduction + a high server-VAD threshold and a longer pause before a turn ends.
+        inputAudioNoiseReduction: { type: 'far_field' },
+        turnDetection: { type: 'server_vad', threshold: 0.85, prefix_padding_ms: 300, silence_duration_ms: 800, create_response: true, interrupt_response: true },
+      }),
     });
     ctx.addShutdownCallback(() => session.close());
+    // If the call drops before the coach ever saved, leave a stub so "report" still answers (never overwrites an earlier real session).
+    ctx.addShutdownCallback(async () => {
+      if (phone && !savedThisCall && !last) saveSession(phone, { mode: 'The Splash Chef', before: 0, after: 0, bug: 'We got cut off before the wrap-up', drill: 'FaceTime me again and run the full set', partial: true });
+    });
     await session.start({
       room: ctx.room,
       agent: new voice.Agent({ instructions: instructions + returning, tools: { save_session: saveSessionTool } }),
