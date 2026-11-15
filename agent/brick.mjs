@@ -39,6 +39,21 @@ export function rememberPhone(phone) {
 }
 export const phonesEndingIn = last4 => Object.keys(load()).filter(p => p.endsWith(last4));
 
+// Drill videos, rotated one per call. Paste real links here: { name: 'Wall shooting', url: 'https://...' }. Empty list = no drill link in the report.
+export const DRILL_LINKS = [];
+
+// Copy by score tier (out of 20). i picks a variant so repeat callers don't see the same line.
+const TIERS = {
+  low: ['"I\'ve missed more than 9,000 shots in my career... and that is why I succeed." Michael Jordan. Run it back.', 'Every shooter you\'ve ever seen bricked a thousand first. Keep going.'],
+  improving: ["You're improving fast. Keep stacking reps.", 'That jumper is getting cleaner every call.'],
+  solid: ['Solid work. The details are where the buckets are.', 'Good base. Now make it automatic.'],
+  perfect: ['Perfect 20 out of 20. Have you considered changing careers?', '20/20. Scouts are going to want your number.'],
+};
+export function tierLine(s, i = 0) {
+  const t = s.after >= 20 ? 'perfect' : s.after <= 9 ? 'low' : s.prevAfter != null && s.after > s.prevAfter ? 'improving' : 'solid';
+  return TIERS[t][i % TIERS[t].length];
+}
+
 export function formatReport(s) {
   if (!s) return NO_FILM;
   if (s.partial) return 'Call dropped before the wrap-up, so no score yet. FaceTime me again and let\'s finish the run.';
@@ -49,6 +64,8 @@ export function formatReport(s) {
     ...(s.prevAfter == null ? [] : [`Progress: ${s.after - s.prevAfter >= 0 ? '+' : ''}${s.after - s.prevAfter} since last time (${s.prevAfter} → ${s.after})`]),
     `#1 bug: ${s.bug}`,
     `Drill: ${s.drill}`,
+    ...(DRILL_LINKS.length ? [`Watch: ${DRILL_LINKS[(s.drillIdx ?? 0) % DRILL_LINKS.length].name} ${DRILL_LINKS[(s.drillIdx ?? 0) % DRILL_LINKS.length].url}`] : []),
+    tierLine(s, s.drillIdx ?? 0),
     SIGN_OFFS[s.mode] ?? SIGN_OFFS['The Splash Chef'],
   ].join('\n');
 }
