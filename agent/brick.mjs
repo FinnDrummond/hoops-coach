@@ -40,7 +40,12 @@ export function rememberPhone(phone) {
 export const phonesEndingIn = last4 => Object.keys(load()).filter(p => p.endsWith(last4));
 
 // Drill videos, rotated one per call. Paste real links here: { name: 'Wall shooting', url: 'https://...' }. Empty list = no drill link in the report.
-export const DRILL_LINKS = [];
+export const DRILL_LINKS = [
+  { name: 'Stationary shooting drill', url: 'https://youtu.be/tbn9CEJMRo0' },
+  { name: 'The best D1 shooting workout', url: 'https://youtu.be/m5gWO3flDfs' },
+  { name: 'How Luke Kennard shoots', url: 'https://youtu.be/RuozRqJhyoQ' },
+  { name: 'Shoot more consistently', url: 'https://youtu.be/HFL1wFGaRj4' },
+];
 
 // Copy by score tier (out of 20). i picks a variant so repeat callers don't see the same line.
 const TIERS = {
